@@ -28,7 +28,7 @@ class Robot:
 			distance_to_attack = rg.dist(self.location,attack_loc)
 			if distance_to_attack<=1:
 				return ['attack', attack_loc]
-			elif:
+			else:
 				return ['move', rg.toward(self.location, prio_loc)]
 		else:
 			if prio_loc == self.location:
