@@ -43,34 +43,36 @@ class Robot:
 		dist = BIG_DIST
 		closest_target = self.get_closest_dict(enemy_distance)
 		nearest_weak = self.get_weakest_ally(active_team)
-		adjacent_enemies = self.check_adjacent(active_enemy, nearest_weak)
+		adjacent_enemies = self.check_adjacent(active_enemy, nearest_weak, direction)
 		target_enemy = self.get_closest_list(self.location,adjacent_enemies)
 		prio_spot = None
-		if active_team[nearest_weak].hp <ALLY_CRITICAL and target_enemy:
-			x, y = self.location
-			tx, ty = target_enemy
-			dx = tx - x
-			dy = ty - y
-			if dx < 0 and dx<dy:
-				prio_dir = direction["right"]
-				prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
-			elif dx > 0 and dx>dy:
-				prio_dir = direction["left"]
-				prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
-			elif dy < 0 and dy<dx:
-				prio_dir = direction["down"]
-				prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
-			elif dy > 0 and dy>dx:
-				prio_dir = direction["up"]
-				prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
-			return prio_spot, target_enemy
+
+		if nearest_weak in active_enemy:
+			if active_team[nearest_weak].hp <ALLY_CRITICAL and target_enemy:
+				x, y = self.location
+				tx, ty = target_enemy
+				dx = tx - x
+				dy = ty - y
+				if dx < 0 and dx<dy:
+					prio_dir = direction["right"]
+					prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
+				elif dx > 0 and dx>dy:
+					prio_dir = direction["left"]
+					prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
+				elif dy < 0 and dy<dx:
+					prio_dir = direction["down"]
+					prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
+				elif dy > 0 and dy>dx:
+					prio_dir = direction["up"]
+					prio_spot = (target_enemy[0]+prio_dir[0], target_enemy[1]+prio_dir[1])
+				return prio_spot, target_enemy
 		else:
-			adjacent_enemies = self.check_adjacent(active_enemy, nearest_weak)
+			adjacent_enemies = self.check_adjacent(active_enemy, self.location,direction)
 			if len(adjacent_enemies) == 4:
 				return self.location, None
 			elif len(adjacent_enemies) <4 and len(adjacent_enemies)>0:
 				if target_enemy:
-					move = self.find_move_direction(target_enemy,adjacent_enemies, direction)
+					move = self.find_move_spot(target_enemy,adjacent_enemies, direction)
 					return move, target_enemy
 				else:
 					move = self.find_move_spot(closest_target, adjacent_enemies,direction)
@@ -93,7 +95,7 @@ class Robot:
 		x, y = loc
 		list_of_locs = []
 		for d in direction:
-			dx, dy = d
+			dx, dy = direction[d]
 			if (x+dx,y+dy) in active_enemy:
 				list_of_locs.append((x+dx, y+dy))
 		return list_of_locs
@@ -126,7 +128,8 @@ class Robot:
 		x, y = self.location
 		temp_list = []
 		for d in direction:
-			dx, dy  = d[0], d[1]
+			temp_d = direction[d]
+			dx, dy  = temp_d[0], temp_d[1]
 			temp_loc = (x+dx, y+dy)
 			if not temp_loc in adjacent:
 				temp_list.append(temp_loc)
