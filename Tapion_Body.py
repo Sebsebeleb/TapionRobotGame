@@ -41,10 +41,10 @@ class Robot:
 	def findPriority(self,active_team, active_enemy,enemy_distance):
 		direction = {"up":(0,-1), "down":(0,1),"left":(-1,0),"right":(1,0)}
 		dist = BIG_DIST
-		closest_target = self.get_closest_in_dict(enemy_distance)
+		closest_target = self.get_closest_dict(enemy_distance)
 		nearest_weak = self.get_weakest_ally(active_team)
 		adjacent_enemies = self.check_adjacent(active_enemy, nearest_weak)
-		target_enemy = self.get_closest_in_list(self.location,adjacent_enemies)
+		target_enemy = self.get_closest_list(self.location,adjacent_enemies)
 		prio_spot = None
 		if active_team[nearest_weak].hp <ALLY_CRITICAL and target_enemy:
 			x, y = self.location
@@ -98,7 +98,7 @@ class Robot:
 				list_of_locs.append((x+dx, y+dy))
 		return list_of_locs
 
-	def get_closest_in_dict(self, dictio):
+	def get_closest_dict(self, dictio):
 		dist = BIG_DIST
 		temp_loc = (0,0)
 		for loc in dictio:
@@ -108,7 +108,7 @@ class Robot:
 				temp_loc = loc
 		return temp_loc
 
-	def get_closest_in_list(self,location,list):
+	def get_closest_list(self,location,list):
 		if len(list) == 1:
 			return list[0]
 		elif len(list)>1:
